@@ -301,7 +301,7 @@
             "name": "GIT_REPO",
             "displayName": "Git Repository URL",
             "description": "The URL of the repository with your application source code.",
-            "value": "https://github.com/ganrad/ocp-fis2-rest-sql.git",
+            "value": "https://github.com/ganrad/ocp-fis2-po.git",
             "required": true
         },
         {
