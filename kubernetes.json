@@ -58,7 +58,7 @@
                 "selector": {
                     "project": "${APP_NAME}",
                     "component": "${APP_NAME}",
-                    "provider": "s2i",
+                    "provider": "s2i"
                 }
             }
         },
