@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+<camelContext id="purchase-orders-api" xmlns="http://camel.apache.org/schema/spring">
+    <!-- Define the rest API for Orders -->
+  <rest path="/orders">
+    <get uri="/" produces="application/json">
+      <description>Retrieves all purchase orders from the backend store (database).  All details will be retrieved for each purchase order.</description>
+      <to uri="direct:getAllPurchaseOrders"/>
+    </get>
+
+    <get uri="/pricerange/{minprice}/{maxprice}">
+      <to uri="direct:getPurOrdersByPrice"/>
+    </get>
+
+    <get uri="/{orderid}" produces="application/json">
+      <description>Retrieves a purchase order by ID (order id).  All details of the purchase order will be fetched.</description>
+      <param name="orderid" type="path" description="The order id (primary key) of the purchase order to be retrieved." />
+      <to uri="direct:getPurchaseOrder"/>
+    </get>
+
+    <post uri="/" consumes="application/json" type="com.redhat.fuse.demo.porders.PurchaseOrder" produces="application/json">
+      <description>Saves a purchase order in the backend data store (database).</description>
+      <to uri="direct:savePurchaseOrder"/>
+    </post>
+
+    <put uri="/{orderid}" type="com.redhat.fuse.demo.porders.PurchaseOrder" consumes="application/json" produces="application/json">
+	<description>Updates a purchase order in the backend data store (database). Only following fields will be updated - price, quantity, description and origin.</description>
+      <param name="orderid" type="path" description="The order id (primary key) of the purchase order to be updated." />
+      <to uri="direct:updatePurchaseOrder"/>
+    </put>
+
+    <delete uri="/{orderid}" produces="application/json">
+      <description>Deletes a purchase order by ID (order id).</description>
+      <param name="orderid" type="path" description="The order id (primary key) of the purchase order to be deleted." />
+      <to uri="direct:deletePurchaseOrder"/>
+    </delete>
+  </rest>
+
+  <route id="porder-get-all">
+    <from uri="direct:getAllPurchaseOrders"/>
+    <log message="Log: Retrieving all purchase orders from database"/>
+    <to uri="sql:select * from orders?dataSource=dataSource"/>
+    <log message="Log: Retrieved purchase orders count: ${headers.CamelSqlRowCount}"/>
+  </route>
+
+  <route id="porder-get-id">
+    <from uri="direct:getPurchaseOrder"/>
+    <log message="Log: Retrieving purchase order details for id: ${headers.orderid}"/>
+    <to uri="sql:select * from orders where id = :#${headers.orderid}?dataSource=dataSource&amp;outputType=SelectOne&amp;outputClass=com.redhat.fuse.demo.porders.PurchaseOrder"/>
+  </route>
+
+  <route id="porder-save">
+    <from uri="direct:savePurchaseOrder"/>
+    <log message="Log: HTTP request body:\n${body}"/>
+<!--
+    <setHeader headerName="CamelSqlRetrieveGeneratedKeys">
+      <simple>true</simple>
+    </setHeader>
+-->
+    <to uri="sql:insert into orders (item, price, quantity, description, cname, dcode, origin) values (:#${body.item}, :#${body.price}, :#${body.quantity}, :#${body.description}, :#${body.cname}, :#${body.dcode}, :#${body.origin})?dataSource=dataSource"/>
+<!-- 
+    <setHeader headerName="RecId">
+      <simple>${headers.CamelsqlGeneratedKeyRows}</simple>
+    </setHeader>
+-->
+    <log message="Log: Purchase Order [id: ] saved in backend database. Update count= ${headers.CamelSqlUpdateCount}"/>
+  </route>
+
+  <route id="porder-update">
+    <from uri="direct:updatePurchaseOrder"/>
+    <log message="Log: HTTP request body:\n${body}"/>
+    <to uri="sql:update orders set price = :#${body.price}, quantity = :#${body.quantity}, description = :#${body.description}, origin = :#${body.origin} where id = :#orderid?dataSource=dataSource"/>
+    <log message="Log: Purchase Order [id: ${headers.orderid}] updated in backend database. Update count= ${headers.CamelSqlUpdateCount}"/>
+  </route>
+
+  <route id="porder-delete">
+    <from uri="direct:deletePurchaseOrder"/>
+    <log message="Log: Deleting purchase order id: ${headers.orderid}"/>
+    <to uri="sql:delete from orders where id = :#orderid?dataSource=dataSource"/>
+    <log message="Log: Purchase Order [id: ${headers.orderid}] deleted in backend database. Update count= ${headers.CamelSqlUpdateCount}"/>
+  </route>
+  </camelContext>
+
+</beans>

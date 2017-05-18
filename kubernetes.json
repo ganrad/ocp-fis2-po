@@ -1,0 +1,402 @@
+{
+    "kind": "Template",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "fis2-spring-boot-camel-rest-sql",
+        "namespace": "purchase-orders",
+        "creationTimestamp": "2017-05-12T18:14:30Z",
+        "annotations": {
+	    "description": "This is FIS 2.0 example that uses Spring Boot to launch a RESTFul application within a docker container.  The application exposes a REST API to retrieve, save, update and delete purchase orders from a backend data store. The application uses a backend MySQL database to persist purchase order information.  This application requires the MYSQL server to be deployed and started first.",
+            "iconClass": "icon-jboss",
+            "tags": "java,springboot,fis",
+            "version": "2.0"
+        }
+    },
+    "objects": [
+        {
+            "apiVersion": "v1",
+            "kind": "Route",
+            "metadata": {
+                "labels": {
+                    "component": "${APP_NAME}",
+                    "provider": "s2i",
+                    "project": "${APP_NAME}",
+                    "version": "${APP_VERSION}",
+                },
+                "name": "${SERVICE_NAME}-route"
+            },
+            "spec": {
+                "to": {
+                    "kind": "Service",
+                    "name": "${SERVICE_NAME}"
+                }
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Service",
+            "metadata": {
+                "annotations": {},
+                "labels": {
+                    "component": "${APP_NAME}",
+                    "provider": "s2i",
+                    "project": "${APP_NAME}",
+                    "version": "${APP_VERSION}",
+                },
+                "name": "${SERVICE_NAME}"
+            },
+            "spec": {
+                "clusterIP": "None",
+                "deprecatedPublicIPs": [],
+                "ports": [
+                    {
+                        "port": 9411,
+                        "protocol": "TCP",
+                        "targetPort": 8080
+                    }
+                ],
+                "selector": {
+                    "project": "${APP_NAME}",
+                    "component": "${APP_NAME}",
+                    "provider": "s2i",
+                }
+            }
+        },
+        {
+            "kind": "ImageStream",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APP_NAME}",
+                "creationTimestamp": null,
+                "labels": {
+                    "component": "${APP_NAME}",
+                    "project": "${APP_NAME}",
+                    "provider": "s2i",
+                    "version": "${APP_VERSION}"
+                }
+            },
+            "spec": {},
+            "status": {
+                "dockerImageRepository": ""
+            }
+        },
+        {
+            "kind": "BuildConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APP_NAME}",
+                "creationTimestamp": null,
+                "labels": {
+                    "component": "${APP_NAME}",
+                    "project": "${APP_NAME}",
+                    "provider": "s2i",
+                    "version": "${APP_VERSION}"
+                }
+            },
+            "spec": {
+                "triggers": [
+                    {
+                        "type": "GitHub",
+                        "github": {
+                            "secret": "${BUILD_SECRET}"
+                        }
+                    },
+                    {
+                        "type": "Generic",
+                        "generic": {
+                            "secret": "${BUILD_SECRET}"
+                        }
+                    },
+                    {
+                        "type": "ConfigChange"
+                    },
+                    {
+                        "type": "ImageChange",
+                        "imageChange": {}
+                    }
+                ],
+                "source": {
+                    "type": "Git",
+                    "git": {
+                        "uri": "${GIT_REPO}",
+                        "ref": "${GIT_REF}"
+                    }
+                },
+                "strategy": {
+                    "type": "Source",
+                    "sourceStrategy": {
+                        "from": {
+                            "kind": "ImageStreamTag",
+                            "namespace": "${IMAGE_STREAM_NAMESPACE}",
+                            "name": "fis-java-openshift:${BUILDER_VERSION}"
+                        },
+                        "forcePull": true,
+                        "incremental": true,
+                        "env": [
+                            {
+                                "name": "BUILD_LOGLEVEL",
+                                "value": "5"
+                            },
+                            {
+                                "name": "ARTIFACT_DIR",
+                                "value": "${ARTIFACT_DIR}"
+                            },
+                            {
+                                "name": "MAVEN_ARGS",
+                                "value": "${MAVEN_ARGS}"
+                            },
+                            {
+                                "name": "MAVEN_ARGS_APPEND",
+                                "value": "${MAVEN_ARGS_APPEND}"
+                            }
+                        ]
+                    }
+                },
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "${APP_NAME}:latest"
+                    }
+                },
+                "resources": {}
+            },
+            "status": {
+                "lastVersion": 0
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APP_NAME}",
+                "creationTimestamp": null,
+                "labels": {
+                    "component": "${APP_NAME}",
+                    "project": "${APP_NAME}",
+                    "provider": "s2i",
+                    "version": "${APP_VERSION}"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "resources": {}
+                },
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    },
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "${APP_NAME}"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "${APP_NAME}:latest"
+                            }
+                        }
+                    }
+                ],
+                "replicas": 1,
+                "selector": {
+                    "component": "${APP_NAME}",
+                    "deploymentconfig": "${APP_NAME}",
+                    "project": "${APP_NAME}",
+                    "provider": "s2i",
+                    "version": "${APP_VERSION}"
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "component": "${APP_NAME}",
+                            "deploymentconfig": "${APP_NAME}",
+                            "project": "${APP_NAME}",
+                            "provider": "s2i",
+                            "version": "${APP_VERSION}"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "${APP_NAME}",
+                                "image": "library/${APP_NAME}:latest",
+                                "readinessProbe": {
+                                    "httpGet": {
+                                        "path": "/health",
+                                        "port": 8081
+                                    },
+                                    "initialDelaySeconds": 10
+                                },
+                                "livenessProbe": {
+                                    "httpGet": {
+                                        "path": "/health",
+                                        "port": 8081
+                                    },
+                                    "initialDelaySeconds": 180
+                                },
+                                "ports": [
+                                    {
+                                        "containerPort": 8080,
+                                        "name": "http"
+                                    },
+                                    {
+                                        "containerPort": 8778,
+                                        "name": "jolokia"
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "KUBERNETES_NAMESPACE",
+                                        "valueFrom": {
+                                            "fieldRef": {
+                                                "fieldPath": "metadata.namespace"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "MYSQL_SERVICE_NAME",
+                                        "value": "${MYSQL_SERVICE_NAME}"
+                                    },
+                                    {
+                                        "name": "MYSQL_SERVICE_DATABASE",
+                                        "value": "${MYSQL_SERVICE_DATABASE}"
+                                    },
+                                    {
+                                        "name": "MYSQL_SERVICE_USERNAME",
+                                        "value": "${MYSQL_SERVICE_USERNAME}"
+                                    },
+                                    {
+                                        "name": "MYSQL_SERVICE_PASSWORD",
+                                        "value": "${MYSQL_SERVICE_PASSWORD}"
+                                    }
+                                ],
+                                "resources": {
+                                    "requests": {
+                                        "cpu": "${CPU_REQUEST}"
+                                    },
+                                    "limits": {
+                                        "cpu": "${CPU_LIMIT}"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {}
+        }
+    ],
+    "parameters": [
+        {
+            "name": "APP_NAME",
+            "displayName": "Application Name",
+            "ldescription": "The name assigned to the application.",
+            "value": "ocp-fis2-po",
+            "required": true
+        },
+        {
+            "name": "GIT_REPO",
+            "displayName": "Git Repository URL",
+            "description": "The URL of the repository with your application source code.",
+            "value": "https://github.com/ganrad/ocp-fis2-rest-sql.git",
+            "required": true
+        },
+        {
+            "name": "GIT_REF",
+            "displayName": "Git Reference",
+            "description": "Set this to a branch name, tag or other ref of your repository if you are not using the default branch.",
+            "value": ""
+        },
+        {
+            "name": "SERVICE_NAME",
+            "displayName": "Service Name",
+            "description": "Exposed service name.",
+            "value": "fis-po"
+        },
+        {
+            "name": "MYSQL_SERVICE_NAME",
+            "displayName": "MySQL Server Service",
+            "description": "Set this to the name of the TCP service of the MySQL server. You may need to create a server first.",
+            "value": "mysql",
+            "required": true
+        },
+        {
+            "name": "MYSQL_SERVICE_DATABASE",
+            "displayName": "MySQL Server Database",
+            "description": "The database hosted by the MySQL server to be used by the application.",
+            "value": "sampledb"
+        },
+        {
+            "name": "MYSQL_SERVICE_USERNAME",
+            "displayName": "MySQL Server Username",
+            "description": "The username used to authenticate with the MySQL server. Leave it empty if authentication is disabled."
+        },
+        {
+            "name": "MYSQL_SERVICE_PASSWORD",
+            "displayName": "MySQL Server Password",
+            "description": "The password used to authenticate with the MySQL server. Leave it empty if authentication is disabled."
+        },
+        {
+            "name": "BUILDER_VERSION",
+            "displayName": "Builder version",
+            "description": "The version of the FIS S2I builder image to use.",
+            "value": "2.0"
+        },
+        {
+            "name": "APP_VERSION",
+            "displayName": "Application Version",
+            "description": "The application version.",
+            "value": "1.0"
+        },
+        {
+            "name": "MAVEN_ARGS",
+            "displayName": "Maven Arguments",
+            "description": "Arguments passed to mvn in the build.",
+            "value": "package -DskipTests -Dfabric8.skip -e -B"
+        },
+        {
+            "name": "MAVEN_ARGS_APPEND",
+            "displayName": "Extra Maven Arguments",
+            "description": "Extra arguments passed to mvn, e.g. for multi-module builds."
+        },
+        {
+            "name": "ARTIFACT_DIR",
+            "displayName": "Maven build directory",
+            "description": "Directory of the artifact to be built, e.g. for multi-module builds."
+        },
+        {
+            "name": "IMAGE_STREAM_NAMESPACE",
+            "displayName": "Image Stream Namespace",
+            "description": "Namespace in which the Fuse ImageStreams are installed. These ImageStreams are normally installed in the openshift namespace. You should only need to modify this if you've installed the ImageStreams in a different namespace/project.",
+            "value": "openshift",
+            "required": true
+        },
+        {
+            "name": "BUILD_SECRET",
+            "displayName": "Git Build Secret",
+            "description": "The secret needed to trigger a build.",
+            "generate": "expression",
+            "from": "[a-zA-Z0-9]{40}"
+        },
+        {
+            "name": "CPU_REQUEST",
+            "displayName": "CPU request",
+            "description": "The amount of CPU to requests.",
+            "value": "0.2",
+            "required": true
+        },
+        {
+            "name": "CPU_LIMIT",
+            "displayName": "CPU limit",
+            "description": "The amount of CPU the container is limited to use.",
+            "value": "1.0",
+            "required": true
+        }
+    ],
+    "labels": {
+        "template": "ocp-fis2-po"
+    }
+}
