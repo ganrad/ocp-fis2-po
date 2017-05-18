@@ -21,7 +21,7 @@
                     "component": "${APP_NAME}",
                     "provider": "s2i",
                     "project": "${APP_NAME}",
-                    "version": "${APP_VERSION}",
+                    "version": "${APP_VERSION}"
                 },
                 "name": "${SERVICE_NAME}-route"
             },
@@ -41,7 +41,7 @@
                     "component": "${APP_NAME}",
                     "provider": "s2i",
                     "project": "${APP_NAME}",
-                    "version": "${APP_VERSION}",
+                    "version": "${APP_VERSION}"
                 },
                 "name": "${SERVICE_NAME}"
             },
