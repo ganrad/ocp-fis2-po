@@ -4,7 +4,7 @@ This FIS (Fuse Integration Services) application exposes a RESTful API for retri
 
 **Important Notes:**
 - It is assumed that you have already deployed OpenShift Container Platform (v3.3 or higher). You can find details on how to Install OpenShift CP [here](https://docs.openshift.com/container-platform/3.3/install_config/index.html).
-- Your system should be configured for Fabric8 Maven Workflow. You can refer to the *Get Started Guide* [here](https://access.redhat.com/documentation/en/red-hat-jboss-middleware-for-openshift/3/single/red-hat-jboss-fuse-integration-services-20-for-openshift/).
+- Your system should be configured for Fabric8 Maven Workflow. You can refer to the *Getting Started Guide* [here](https://access.redhat.com/documentation/en/red-hat-jboss-middleware-for-openshift/3/single/red-hat-jboss-fuse-integration-services-20-for-openshift/).
 - A Red Hat MySQL xPaaS container should already be deployed and running on your OpenShift installation. Refer to the MySQL xPaaS image documentation for OpenShift in order to deploy a MySQL container using the provided `mysql-ephemeral` template.
 - This is a Spring Boot FIS 2.0 application and was tested on a OpenShift Container Platform v3.3 installation. This application should work on OpenShift CP v3.3 or higher.
 
@@ -58,12 +58,12 @@ The REST API exposed by this FIS application can be accessed by using the _conte
 
 You can access the Purchase Order REST API from your Web browser, e.g.:
 
-- <http://<hostname_route_url>/purchase/orders>
-- <http://<hostname_route_url>/purchase/orders/1>
+- http://<hostname_route_url>/purchase/orders
+- http://<hostname_route_url>/purchase/orders/1
 
 ### Swagger API
 
 The documentation for the REST API's exposed by this Purchase Order application can be accessed by using the _context-path_ `purchase/api-doc`, e.g.:
 
-- <http://<hostname_route_url>/purchase/api-doc>
+- http://<hostname_route_url>/purchase/api-doc
 
