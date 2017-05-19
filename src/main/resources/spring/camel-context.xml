@@ -13,9 +13,11 @@
       <to uri="direct:getAllPurchaseOrders"/>
     </get>
 
+<!--
     <get uri="/pricerange/{minprice}/{maxprice}">
       <to uri="direct:getPurOrdersByPrice"/>
     </get>
+-->
 
     <get uri="/{orderid}" produces="application/json">
       <description>Retrieves a purchase order by ID (order id).  All details of the purchase order will be fetched.</description>

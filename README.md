@@ -1,73 +1,68 @@
-# Spring Boot and Camel REST / SQL QuickStart
+# OpenShift FIS 2.0 Example Application
 
-This example demonstrates how to use SQL via JDBC along with Camel's REST DSL to expose a RESTful API.
-
-### Building
-
-The example can be built with
-
-    mvn clean install
-
-### Running the example in OpenShift
+This FIS (Fuse Integration Services) example exposes a RESTful API for retrieving and storing **Purchase Orders** in a MySQL database backend.  This is a Spring Boot application which runs within an embedded Apache Tomcat instance.
 
 It is assumed that:
 - OpenShift platform is already running, if not you can find details how to [Install OpenShift at your site](https://docs.openshift.com/container-platform/3.3/install_config/index.html).
 - Your system is configured for Fabric8 Maven Workflow, if not you can find a [Get Started Guide](https://access.redhat.com/documentation/en/red-hat-jboss-middleware-for-openshift/3/single/red-hat-jboss-fuse-integration-services-20-for-openshift/)
 - The Red Hat MySQL xPaaS product should already be installed and running on your OpenShift installation, one simple way to run a MySQL service is following the documentation of the MySQL xPaaS image for OpenShift related to the `mysql-ephemeral` template.
 
-The example can then be built and deployed using a single goal:
+This application was tested in an OpenShift v3.3 installation.
+
+### S2I Binary Workflow
+Follow the steps below to deploy this application from a command window with OpenShift Client Tools installed.  The S2I binary workflow allows developers to rapidly develop FIS applications in an iterative manner - Develop -> Build -> Test -> Deploy.
+
+The example can be built with
+
+    mvn clean install
+
+The example can be built and deployed using a single goal:
 
     $ mvn fabric8:deploy -Dmysql-service-username=<username> -Dmysql-service-password=<password>
 
-The `username` and `password` system properties correspond to the credentials
-used when deploying the MySQL database service.
-
+Substitute appropriate values for 'username' and 'password' fields in the maven command above.  The `username` and `password` system properties correspond to the credentials used when deploying the MySQL database service.
 
 To list all the running pods:
 
     oc get pods
 
-Then find the name of the pod that runs this quickstart, and output the logs from the running pods with:
+Then find the name of the pod that runs this application, and output the logs from the running pods with:
 
     oc logs <name of pod>
 
 You can also use the OpenShift [web console](https://docs.openshift.com/container-platform/3.3/getting_started/developers_console.html#developers-console-video) to manage the
 running pods, and view logs and much more.
 
-### Running via an S2I Application Template
+### S2I Source and Application Template Workflow
 
-Application templates allow you deploy applications to OpenShift by filling out a form in the OpenShift console that allows you to adjust deployment parameters.  This template uses an S2I source build so that it handle building and deploying the application for you.
+Application templates allows developers and IT Operations staff to deploy FIS applications to OpenShift by filling out a form in the OpenShift console and allows them to adjust deployment parameters.  The S2I Source and Application Template workflow allows IT Operations staff to rapidly deploy and promote FIS applications to multiple regions - Test -> Pre-Production -> Production.
 
-First, import the Fuse image streams:
+First, download the `kubernetes.json` file from this GitHub repository to a machine with OpenShift Client Tools installed on it.
 
-    oc create -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/fis-image-streams.json
+Next, login to the OpenShift Web Console and create a new project.  Click "Add to Project" button in the OpenShift console and select the template titled `fis2-spring-boot-camel-rest-sql`.
 
-Then create the quickstart template:
+Make sure you specify the location of this GitHub project in the `GIT_REPO` field and use specify the appropriate values for the MySQL `username` and `password`.  Then click on the **Create** application button on the bottom of the web page.
 
-    oc create -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/quickstarts/spring-boot-camel-rest-sql-template.json
+### Accessing the Purchase Order REST API 
 
-Now when you use "Add to Project" button in the OpenShift console, you should see a template for this quickstart. 
+As soon as the application is started, 10 purchase orders are inserted into the backend (MySQL) database.  The inserted purchase orders are numbered starting from id=1 to id=10.  When the application is running, a REST API is made available to list, create, update and delete purchase orders.
 
+**NOTE**: The hostname (route) might vary depending upon your OpenShift setup. Use the command `oc get routes` to determine hostname to be used in the REST API URL.
 
-### Accessing the REST service
+The REST API exposed by this FIS application can be accessed by using the _context-path_ `purchase/`.  The REST API endpoint's exposed are as follows.
 
-When the example is running, a REST service is available to list the books that can be ordered, and as well the order statuses.
+- `orders`: GET : To list all available purchase orders in the backend database.
+- `orders/{id}`: GET : To get order details by `order id`.
+- `orders` : POST : To create a new purchase order.  The API consumes and produces orders in `JSON` format.
+- `orders/{id}` : PUT : To update a new purchase order. The API consumes and produces orders in `JSON` format.
+- `orders/{id}` : DELETE : To delete a purchase order.
 
-Notice: As it depends on your OpenShift setup, the hostname (route) might vary. Verify with `oc get routes` which hostname is valid for you. Add the `-Dfabric8.deploy.createExternalUrls=true` option to your Maven commands if you want it to deploy a Route configuration for the service.
+You can access the Purchase Order REST API from your Web browser, e.g.:
 
-The actual endpoint is using the _context-path_ `camel-rest-sql/books` and the REST service provides two services:
-
-- `books`: to list all the available books that can be ordered,
-- `books/order/{id}`: to output order status for the given order `id`.
-
-The example automatically creates new orders with a running order `id` starting from 1.
-
-You can then access these services from your Web browser, e.g.:
-
-- <http://qs-camel-rest-sql.example.com/camel-rest-sql/books>
-- <http://qs-camel-rest-sql.example.com/camel-rest-sql/books/order/1>
+- <http://<hostname_route_url>/purchase/orders>
+- <http://<hostname_route_url>/purchase/orders/1>
 
 ### Swagger API
 
-The example provides API documentation of the service using Swagger using the _context-path_ `camel-rest-sql/api-doc`. You can access the API documentation from your Web browser at <http://qs-camel-rest-sql.example.com/camel-rest-sql/api-doc>.
+This FIS application provides documentation for the Purchase Order REST API's using Swagger. The API documentation can be accessed by using the _context-path_ `purchase/api-doc`.
 

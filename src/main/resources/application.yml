@@ -27,8 +27,6 @@ spring:
     url:      jdbc:mysql://${${mysql.service.name}.service.host}:${${mysql.service.name}.service.port}/${mysql.service.database}
     username: ${mysql.service.username}
     password: ${mysql.service.password}
-    #username: admin
-    #password: admin123
 
 # The application configuration properties
 quickstart:
