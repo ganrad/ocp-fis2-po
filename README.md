@@ -1,11 +1,11 @@
-# OpenShift FIS 2.0 Purchase Order (Example) Application
+# OpenShift FIS 2.0 Purchase Order Application
 
 This FIS (Fuse Integration Services) application exposes a RESTful API for retrieving and storing *Purchase Orders* in a MySQL database server.  This is a Spring Boot application which runs within an embedded Apache Tomcat Web Server.
 
 **Important Notes:**
-- It is assumed that OpenShift platform is already running, if not you can find details on how to [Install OpenShift](https://docs.openshift.com/container-platform/3.3/install_config/index.html).
-- Your system should be configured for Fabric8 Maven Workflow, if not you can find a [Get Started Guide](https://access.redhat.com/documentation/en/red-hat-jboss-middleware-for-openshift/3/single/red-hat-jboss-fuse-integration-services-20-for-openshift/)
-- The Red Hat MySQL xPaaS product should already be installed and running on your OpenShift installation. A simple way to run a MySQL service is following the documentation of the MySQL xPaaS image for OpenShift related to the `mysql-ephemeral` template.
+- It is assumed that you have already deployed OpenShift Container Platform (v3.3 or higher). You can find details on how to Install OpenShift CP [here](https://docs.openshift.com/container-platform/3.3/install_config/index.html).
+- Your system should be configured for Fabric8 Maven Workflow. You can refer to the *Get Started Guide* [here](https://access.redhat.com/documentation/en/red-hat-jboss-middleware-for-openshift/3/single/red-hat-jboss-fuse-integration-services-20-for-openshift/).
+- A Red Hat MySQL xPaaS container should already be deployed and running on your OpenShift installation. Refer to the MySQL xPaaS image documentation for OpenShift in order to deploy a MySQL container using the provided `mysql-ephemeral` template.
 - This is a Spring Boot FIS 2.0 application and was tested on a OpenShift Container Platform v3.3 installation. This application should work on OpenShift CP v3.3 or higher.
 
 ### S2I Binary Workflow
