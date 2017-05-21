@@ -19,7 +19,7 @@ The application can be built and deployed using a single goal:
 
     $ mvn fabric8:deploy -Dmysql-service-username=<username> -Dmysql-service-password=<password>
 
-Substitute appropriate values for 'username' and 'password' fields in the maven command above.  The `username` and `password` system properties correspond to the credentials used when deploying the MySQL database service.
+Substitute appropriate values for 'username' and 'password' fields in the maven command above.  The `username` and `password` system properties should correspond to the values used when deploying the MySQL database service.
 
 To list all the running pods:
 
@@ -47,9 +47,7 @@ $ oc project
 $ oc create -f kubernetes.json
 ```
 
-3.  Click "Add to Project" button in the OpenShift web console and select the template titled `fis2-spring-boot-camel-rest-sql`.
-
-Make sure you specify the location of this GitHub project in the `GIT_REPO` field and specify appropriate values for the MySQL database server `username` and `password`.  Then click on the **Create** application button on the bottom of the web page.
+3.  Click "Add to Project" button in the OpenShift web console and select the template titled `fis2-spring-boot-camel-rest-sql`.  Make sure you specify the location of this GitHub project in the `GIT_REPO` field and specify appropriate values for the MySQL database server `username` and `password`.  Then click on the **Create** application button on the bottom of the web page.
 
 ### Accessing the Purchase Order Application REST API 
 
