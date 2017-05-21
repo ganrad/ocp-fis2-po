@@ -31,15 +31,25 @@ Then find the name of the pod that runs this application, and output the logs fr
 
 You can also use the OpenShift [web console](https://docs.openshift.com/container-platform/3.3/getting_started/developers_console.html#developers-console-video) to manage the running pods, and view logs and much more.
 
-### S2I Source and Application Template Workflow
+### S2I (Source to Image) Application Template Workflow
 
-An application template allows developers and IT Operations staff to deploy FIS applications to OpenShift by filling out a form in the OpenShift console and allows them to adjust deployment parameters.  The S2I Source and Application Template workflow allows IT Operations staff to rapidly deploy and promote FIS applications across multiple regions - Test -> Pre-Production -> Production.
+An application template allows developers and IT Operations staff to deploy FIS applications to OpenShift by filling out a form in the OpenShift console and allows them to adjust deployment parameters.  The S2I application template workflow allows IT Operations staff to rapidly deploy and promote FIS applications across multiple regions - Test -> Pre-Production -> Production.
 
-First, download the `kubernetes.json` file from this GitHub repository to a machine with OpenShift Client Tools installed on it.
+Follow the steps outlined below to deploy this RESTFul application using the S2I application template workflow:
 
-Next, login to the OpenShift Web Console and create a new project.  Click "Add to Project" button in the OpenShift console and select the template titled `fis2-spring-boot-camel-rest-sql`.
+1.  Login to the OpenShift Web Console and create a new project.  Name the project `purchase-orders`.  If you created the project using the OpenShift CLI, then make sure your current project is 'purchase-orders' by using the command below.  The output of this command should display your current project.
+```
+$ oc project
+```
 
-Make sure you specify the location of this GitHub project in the `GIT_REPO` field and specify the appropriate values for the MySQL database server `username` and `password`.  Then click on the **Create** application button on the bottom of the web page.
+2.  Download the `kubernetes.json` file from this GitHub repository to a machine with OpenShift Client Tools installed on it.  Create the `fis2-sprint-boot-camel-rest-sql` application template object in the OpenShift project `purchase-orders` by issuing the command below.
+```
+$ oc create -f kubernetes.json
+```
+
+3.  Click "Add to Project" button in the OpenShift web console and select the template titled `fis2-spring-boot-camel-rest-sql`.
+
+Make sure you specify the location of this GitHub project in the `GIT_REPO` field and specify appropriate values for the MySQL database server `username` and `password`.  Then click on the **Create** application button on the bottom of the web page.
 
 ### Accessing the Purchase Order Application REST API 
 
@@ -49,7 +59,7 @@ As soon as the application is started, 10 purchase orders are inserted into the 
 
 The REST API exposed by this FIS application can be accessed by using the _context-path_ (or Base Path) `purchase/`.  The REST API endpoint's exposed are as follows.
 
-**`URI Template` : HTTP VERB : DESCRIPTION**
+**`URI Template : HTTP VERB : DESCRIPTION`**
 - `orders`: GET : To list all available purchase orders in the backend database.
 - `orders/{id}`: GET : To get order details by `order id`.
 - `orders` : POST : To create a new purchase order.  The API consumes and produces orders in `JSON` format.
