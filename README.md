@@ -9,7 +9,7 @@ This FIS (Fuse Integration Services) application exposes a RESTful API for retri
 - This is a Spring Boot FIS 2.0 application and was tested on a OpenShift Container Platform v3.3 installation. This application should work on OpenShift CP v3.3 or higher.
 
 ### S2I Binary Workflow
-Follow the steps below to deploy this application from a command window with OpenShift Client Tools installed.  The S2I binary workflow allows developers to rapidly develop FIS applications in an iterative manner - Develop -> Build -> Test -> Deploy.
+Follow the steps below to deploy this FIS application from a command window with OpenShift Client Tools installed.  The S2I binary workflow allows developers to rapidly develop FIS applications in an iterative manner - Develop -> Build -> Test -> Deploy.
 
 The application can be built with
 
@@ -35,7 +35,7 @@ You can also use the OpenShift [web console](https://docs.openshift.com/containe
 
 An application template allows developers and IT Operations staff to deploy FIS applications to OpenShift by filling out a form in the OpenShift console and allows them to adjust deployment parameters.  The S2I application template workflow allows IT Operations staff to rapidly deploy and promote FIS applications across multiple regions - Test -> Pre-Production -> Production.
 
-Follow the steps outlined below to deploy this RESTFul application using the S2I application template workflow:
+Follow the steps outlined below to deploy this RESTFul FIS application using the S2I application template workflow:
 
 1.  Login to the OpenShift Web Console and create a new project.  Name the project `purchase-orders`.  If you created the project using the OpenShift CLI, then make sure your current project is 'purchase-orders' by using the command below.  The output of this command should display your current project.
 ```
@@ -51,7 +51,7 @@ $ oc create -f kubernetes.json
 
 ### Accessing the Purchase Order Application REST API 
 
-As soon as the application is started, 10 purchase orders are inserted into the backend (MySQL) database.  The inserted purchase orders are numbered starting from id=1 to id=10.  When the application is running, a REST API is made available to list, create, update and delete purchase orders.
+As soon as the FIS application is started, 10 purchase orders will be inserted into the backend (MySQL) database.  The inserted purchase orders are numbered starting from id=1 to id=10.  When the application is running, the REST API can be used to list, create, update and delete purchase orders.
 
 **NOTE**: The hostname (route) might vary depending upon your OpenShift setup. Use the command `oc get routes` to determine the hostname to be used in the REST API URL.
 
@@ -71,7 +71,7 @@ You can access the Purchase Order REST API from your Web browser, e.g.:
 
 ### Swagger API
 
-The documentation for the REST API's exposed by this Purchase Order application can be accessed by using the _context-path_ `purchase/api-doc`, e.g.:
+The documentation for the REST API's exposed by this Purchase Order FIS application can be accessed by using the _context-path_ `purchase/api-doc`, e.g.:
 
 - http://<hostname_route_url>/purchase/api-doc
 
