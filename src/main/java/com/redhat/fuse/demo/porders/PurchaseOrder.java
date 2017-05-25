@@ -89,11 +89,11 @@ public class PurchaseOrder {
         this.origin = origin;
     }
 
-/** Uncomment this method for retrieving order total !!!
+// Uncomment this method for retrieving order total !!!
     public Float getOrderTotal() {
 	return ( this.price * this.quantity );
     }
-*/
+//
     public String toString() {
 	StringBuffer sb = new StringBuffer();
 	sb.append(
