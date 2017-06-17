@@ -11,23 +11,40 @@ This FIS (Fuse Integration Services) application exposes a RESTful API for retri
 ### S2I Binary Workflow
 Follow the steps below to deploy this FIS application from a command window with OpenShift Client Tools installed.  The S2I binary workflow allows developers to rapidly develop FIS applications in an iterative manner - Develop -> Build -> Test -> Deploy.
 
-The application can be built with
+To build and deploy this application within a container on OpenShift CP, follow the steps below.
 
-    mvn clean install
+1.  Fork this GitHub repository so that it gets added to your GitHub account.  Open a command window (in Linux/MacOS) and switch to an empty directory or create a new directory.  Then clone your repository to create a local copy on your computer and sync between the two locations. Refer to the command below.
+```
+$ git clone https://github.com/YOUR-USERNAME/ocp-fis2-po
+```
+Replace `YOUR-USERNAME` with your GitHub account name.
 
-The application can be built and deployed using a single goal:
+2.  (Optional) The application can be built by issuing the following maven command below.
+```
+$ mvn clean install
+```
 
-    $ mvn fabric8:deploy -Dmysql-service-username=<username> -Dmysql-service-password=<password>
+3.  Login to your OpenShift Server via OpenShift CLI.  See command below.
+```
+$ oc login URL -u USER -p PASSWORD
+```
+Substitute correct values for `URL` (OpenShift Master URL), `USER` & `PASSWORD`. 
 
+4.  The application can be built and the corresponding container can be deployed to your OpenShift instance using a single goal:
+```
+$ mvn fabric8:deploy -Dmysql-service-username=<username> -Dmysql-service-password=<password>
+```
 Substitute appropriate values for 'username' and 'password' fields in the maven command above.  The `username` and `password` system properties should correspond to the values used when deploying the MySQL database service.
 
-To list all the running pods:
+5.  (Optional) To list all the running pods:
+```
+$ oc get pods
+```
 
-    oc get pods
-
-Then find the name of the pod that runs this application, and output the logs from the running pods with:
-
-    oc logs <name of pod>
+6.  (Optional) Find the name of the pod that runs this application, and output the logs from the running pods with:
+```
+$ oc logs -f <name of pod>
+```
 
 You can also use the OpenShift [web console](https://docs.openshift.com/container-platform/3.3/getting_started/developers_console.html#developers-console-video) to manage the running pods, and view logs and much more.
 
