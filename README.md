@@ -24,13 +24,13 @@ Replace `YOUR-USERNAME` with your GitHub account name.
 $ mvn clean install
 ```
 
-3.  Login to your OpenShift Server via OpenShift CLI.  See command below.
+3.  Login to your OpenShift Server via OpenShift CLI using the command below.
 ```
 $ oc login URL -u USER -p PASSWORD
 ```
 Substitute correct values for `URL` (OpenShift Master URL), `USER` & `PASSWORD`. 
 
-4.  The application can be built and the corresponding container can be deployed to your OpenShift instance using a single goal:
+4.  Use the command listed below to build the application, build the application container and deploy the container to your OpenShift instance.  This command uses a single maven goal to execute all of the build and deploy steps.
 ```
 $ mvn fabric8:deploy -Dmysql-service-username=<username> -Dmysql-service-password=<password>
 ```
