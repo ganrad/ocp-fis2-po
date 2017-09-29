@@ -8,6 +8,9 @@ This FIS (Fuse Integration Services) application exposes a RESTful API for retri
 - A Red Hat MySQL xPaaS container should already be deployed and running on your OpenShift installation. Refer to the MySQL xPaaS image documentation for OpenShift in order to deploy a MySQL container using the provided `mysql-ephemeral` template.
 - This is a Spring Boot FIS 2.0 application and was tested on a OpenShift Container Platform v3.3 installation. This application should work on OpenShift CP v3.3 or higher.
 
+### Pre-requisites
+Before you proceed, deploy a MySQL database server instance (Pod) on OpenShift.  OpenShift CP ships with MySQL templates for deploying both ephemeral and persistent data server instances.  Make sure to write down the MySQL server `username` and `password` as you will need to provide these values while deploying the FIS Purchase Order Application.
+
 ### S2I Binary Workflow
 Follow the steps below to deploy this FIS application from a command window with OpenShift Client Tools installed.  The S2I binary workflow allows developers to rapidly develop FIS applications in an iterative manner - Develop -> Build -> Test -> Deploy.
 
